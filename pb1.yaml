@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - /home/ubuntu/vars.yaml 
+
+  tasks:
+  - name: Create EC2 instances
+    amazon.aws.ec2_instance:
+      name: "{{ item.name }}"
+      key_name: "key_51973"
+      instance_type: t3a.medium
+      security_group: default
+      region: us-east-1
+      aws_access_key: "{{ec2_access_key}}"  # From vault as defined
+      aws_secret_key: "{{ec2_secret_key}}"  # From vault as defined      
+      subnet_id: subnet-0bf81627d238b09d9
+      image_id: "{{ item.image }}"
+      tags:
+        environment: "{{ item.name }}"
+    loop:
+      - { image: "ami-0e2c8caa4b6378d8c", name: "manage-node-1" } # Update AMI ID according 
+      - { image: "ami-0453ec754f44f9a4a", name: "manage-node-2" } # to your account
+      - { image: "ami-0e2c8caa4b6378d8c", name: "manage-node-3" }
